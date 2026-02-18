@@ -1,0 +1,21 @@
+<Application x:Class="AudioTranscriber.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:converters="clr-namespace:AudioTranscriber.Converters"
+             StartupUri="MainWindow.xaml">
+    <Application.Resources>
+        <!-- 全局转换器 -->
+        <converters:BoolToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        <converters:RecordingStateToVisibilityConverter x:Key="RecordingStateToVisibilityConverter"/>
+        <converters:CountToVisibilityConverter x:Key="CountToVisibilityConverter"/>
+        <converters:BoolToBrushConverter x:Key="BoolToBrushConverter"/>
+        <converters:BoolToTextConverter x:Key="BoolToTextConverter"/>
+        
+        <!-- 发光效果 -->
+        <DropShadowEffect x:Key="GlowEffect" 
+                         Color="#FFFF6B9D" 
+                         BlurRadius="15" 
+                         ShadowDepth="0"
+                         Opacity="0.6"/>
+    </Application.Resources>
+</Application>
