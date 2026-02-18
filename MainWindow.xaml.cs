@@ -1,84 +1,121 @@
-using System;
+using AudioTranscriber.ViewModels;
 using System.Windows;
 using System.Windows.Input;
-using AudioTranscriber.ViewModels;
+using System.Windows.Media;
+using System.Windows.Media.Effects;
+using System.Collections.Specialized;
 
 namespace AudioTranscriber
 {
+    /// <summary>
+    /// 悬浮字幕主窗口
+    /// </summary>
     public partial class MainWindow : Window
     {
-        private MainViewModel? _viewModel;
+        private bool _isMaximized = false;
+        private Rect _normalBounds;
 
         public MainWindow()
         {
-            try
+            InitializeComponent();
+
+            // 确保ViewModel被正确初始化
+            if (DataContext is MainViewModel vm)
             {
-                App.LogInfo("初始化 MainWindow...");
-                InitializeComponent();
-                
-                _viewModel = DataContext as MainViewModel;
-                
-                // 注册窗口关闭事件
-                Closing += OnWindowClosing;
-                
-                // 键盘快捷键
-                KeyDown += OnKeyDown;
-                
-                App.LogInfo("MainWindow 初始化完成");
-            }
-            catch (Exception ex)
-            {
-                App.LogInfo($"MainWindow 初始化失败: {ex.Message}");
-                System.Windows.MessageBox.Show(
-                    $"窗口初始化失败:\n{ex.Message}\n\n{ex.StackTrace}",
-                    "错误",
-                    System.Windows.MessageBoxButton.OK,
-                    System.Windows.MessageBoxImage.Error);
+                vm.PropertyChanged += ViewModel_PropertyChanged;
+
+                // 监听字幕集合变化，自动滚动到最新
+                vm.TranscriptSegments.CollectionChanged += TranscriptSegments_CollectionChanged;
             }
         }
 
-        private void OnWindowClosing(object? sender, System.ComponentModel.CancelEventArgs e)
+        private void ViewModel_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            try
+            // 当设置改变时更新UI
+            if (e.PropertyName == nameof(MainViewModel.BackgroundBrush))
             {
-                // 清理资源
-                _viewModel?.Dispose();
-            }
-            catch (Exception ex)
-            {
-                App.LogInfo($"窗口关闭时出错: {ex.Message}");
+                SubtitleContainer.Background = (DataContext as MainViewModel)?.BackgroundBrush;
             }
         }
 
-        private void OnKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        /// <summary>
+        /// 字幕集合变化时自动滚动到最新
+        /// </summary>
+        private void TranscriptSegments_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
-            try
+            if (e.Action == NotifyCollectionChangedAction.Add)
             {
-                // 空格键控制录音
-                if (e.Key == Key.Space && Keyboard.Modifiers == ModifierKeys.None)
+                // 使用Dispatcher延迟执行，等待UI更新完成
+                Dispatcher.BeginInvoke(new Action(() =>
                 {
-                    if (_viewModel?.CurrentState == Models.RecordingState.Recording)
-                    {
-                        _viewModel.StopRecordingCommand.Execute(null);
-                    }
-                    else
-                    {
-                        _viewModel?.StartRecordingCommand.Execute(null);
-                    }
-                    e.Handled = true;
-                }
-                
-                // Ctrl+S 保存
-                if (e.Key == Key.S && Keyboard.Modifiers == ModifierKeys.Control)
+                    SubtitleScrollViewer?.ScrollToEnd();
+                }), System.Windows.Threading.DispatcherPriority.Background);
+            }
+        }
+
+        /// <summary>
+        /// 窗口拖动
+        /// </summary>
+        private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ClickCount == 1)
+            {
+                // 单击拖动窗口
+                if (SettingsPanel.Visibility != Visibility.Visible)
                 {
-                    _viewModel?.SaveTranscriptCommand.Execute(null);
-                    e.Handled = true;
+                    DragMove();
                 }
             }
-            catch (Exception ex)
+        }
+
+        /// <summary>
+        /// 双击最大化/还原
+        /// </summary>
+        private void Window_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (_isMaximized)
             {
-                App.LogInfo($"键盘快捷键处理失败: {ex.Message}");
+                // 还原
+                Left = _normalBounds.Left;
+                Top = _normalBounds.Top;
+                Width = _normalBounds.Width;
+                Height = _normalBounds.Height;
+                _isMaximized = false;
             }
+            else
+            {
+                // 最大化（保存原位置）
+                _normalBounds = new Rect(Left, Top, Width, Height);
+                Left = 0;
+                Top = 0;
+                Width = SystemParameters.WorkArea.Width;
+                Height = 200;
+                _isMaximized = true;
+            }
+        }
+
+        /// <summary>
+        /// 打开设置面板
+        /// </summary>
+        private void SettingsButton_Click(object sender, RoutedEventArgs e)
+        {
+            SettingsPanel.Visibility = Visibility.Visible;
+        }
+
+        /// <summary>
+        /// 关闭设置面板
+        /// </summary>
+        private void CloseSettings_Click(object sender, RoutedEventArgs e)
+        {
+            SettingsPanel.Visibility = Visibility.Collapsed;
+        }
+
+        /// <summary>
+        /// 关闭窗口
+        /// </summary>
+        private void CloseButton_Click(object sender, RoutedEventArgs e)
+        {
+            Close();
         }
     }
 }

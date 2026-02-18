@@ -9,6 +9,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Media;
+using System.Windows.Media.Effects;
 
 namespace AudioTranscriber.ViewModels
 {
@@ -71,6 +73,56 @@ namespace AudioTranscriber.ViewModels
         
         // 当前翻译服务
         private ITranslationService? _currentTranslationService;
+
+        // ========== 字幕样式设置 ==========
+        
+        [ObservableProperty]
+        private double _fontSize = 24;
+
+        [ObservableProperty]
+        private double _translationFontSize = 18;
+
+        [ObservableProperty]
+        private double _backgroundOpacity = 50; // 0-100
+
+        [ObservableProperty]
+        private double _cornerRadius = 20;
+
+        [ObservableProperty]
+        private string _selectedBackgroundColor = "深蓝";
+
+        [ObservableProperty]
+        private System.Windows.Media.Brush _subtitleColor = System.Windows.Media.Brushes.White;
+
+        [ObservableProperty]
+        private System.Windows.Media.Brush _translationColor = System.Windows.Media.Brushes.LightYellow;
+
+        [ObservableProperty]
+        private Effect _textShadowEffect = new DropShadowEffect 
+        { 
+            Color = Colors.Black, 
+            BlurRadius = 4, 
+            ShadowDepth = 2, 
+            Opacity = 0.8 
+        };
+
+        // 背景画刷（根据透明度和颜色计算）
+        private System.Windows.Media.Brush _backgroundBrush = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromArgb(128, 26, 26, 46));
+        public System.Windows.Media.Brush BackgroundBrush 
+        { 
+            get => _backgroundBrush;
+            set 
+            { 
+                if (SetProperty(ref _backgroundBrush, value))
+                {
+                    OnPropertyChanged(nameof(BackgroundBrush));
+                }
+            }
+        }
+
+        public System.Windows.Media.Brush BorderBrush => new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromArgb((byte)(BackgroundOpacity * 2.55 * 0.3), 255, 255, 255));
+
+        public Thickness BorderThickness => new Thickness(1);
 
         public MainViewModel()
         {
@@ -830,6 +882,41 @@ namespace AudioTranscriber.ViewModels
             {
                 return 0;
             }
+        }
+
+        // ========== 样式属性变更处理 ==========
+
+        partial void OnBackgroundOpacityChanged(double value)
+        {
+            UpdateBackgroundBrush();
+        }
+
+        partial void OnSelectedBackgroundColorChanged(string value)
+        {
+            UpdateBackgroundBrush();
+        }
+
+        /// <summary>
+        /// 更新背景画刷
+        /// </summary>
+        private void UpdateBackgroundBrush()
+        {
+            var color = SelectedBackgroundColor switch
+            {
+                "黑色" => System.Windows.Media.Colors.Black,
+                "深蓝" => System.Windows.Media.Color.FromRgb(26, 26, 46),
+                "深紫" => System.Windows.Media.Color.FromRgb(45, 27, 78),
+                "深绿" => System.Windows.Media.Color.FromRgb(27, 58, 46),
+                "深红" => System.Windows.Media.Color.FromRgb(58, 27, 27),
+                "透明" => System.Windows.Media.Colors.Transparent,
+                _ => System.Windows.Media.Color.FromRgb(26, 26, 46)
+            };
+
+            byte alpha = (byte)(BackgroundOpacity * 2.55);
+            var brush = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromArgb(alpha, color.R, color.G, color.B));
+            BackgroundBrush = brush;
+            
+            OnPropertyChanged(nameof(BorderBrush));
         }
 
         public void Dispose()
