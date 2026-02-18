@@ -229,8 +229,9 @@
         <!-- 设置面板 (默认隐藏) - 实体背景，非透明 -->
         <Border x:Name="SettingsPanel"
                 Background="#FF1E1E2E"
-                Width="450"
-                Height="550"
+                Width="480"
+                Height="650"
+                MaxHeight="700"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
                 Visibility="Collapsed"
@@ -241,14 +242,14 @@
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
-                
+
                 <!-- 设置标题栏 -->
-                <Border Grid.Row="0" 
-                        Background="#FF2D2D44" 
-                        Padding="20,15">
+                <Border Grid.Row="0"
+                        Background="#FF2D2D44"
+                        Padding="20,12">
                     <Grid>
-                        <TextBlock Text="⚙️ 设置" 
-                                  FontSize="20" 
+                        <TextBlock Text="⚙️ 设置"
+                                  FontSize="18"
                                   FontWeight="Bold"
                                   Foreground="White"
                                   VerticalAlignment="Center"/>
@@ -256,93 +257,96 @@
                                Content="✕"
                                HorizontalAlignment="Right"
                                Click="CloseSettings_Click"
-                               FontSize="18"/>
+                               FontSize="16"/>
                     </Grid>
                 </Border>
-                
+
                 <!-- 设置内容 -->
-                <ScrollViewer Grid.Row="1" 
+                <ScrollViewer Grid.Row="1"
                              VerticalScrollBarVisibility="Auto"
-                             Margin="20"
+                             Margin="15,10"
+                             CanContentScroll="False"
+                             PanningMode="Both"
                              Style="{StaticResource TransparentScrollViewer}">
                     <StackPanel>
                         <!-- 音频源 -->
-                        <TextBlock Text="🎧 音频源" Foreground="#FFAAAAAA" FontSize="12" Margin="0,0,0,5"/>
+                        <TextBlock Text="🎧 音频源" Foreground="#FFAAAAAA" FontSize="11" Margin="0,0,0,3"/>
                         <ComboBox ItemsSource="{Binding AudioDevices}"
                                  SelectedItem="{Binding SelectedDevice}"
                                  DisplayMemberPath="Name"
                                  Background="#22FFFFFF"
                                  Foreground="Black"
                                  BorderBrush="#44FFFFFF"
-                                 Padding="8,5"
-                                 Margin="0,0,0,15"/>
-                        
+                                 Padding="6,4"
+                                 Margin="0,0,0,12"/>
+
                         <!-- 翻译服务 -->
-                        <TextBlock Text="🌐 翻译服务" Foreground="#FFAAAAAA" FontSize="12" Margin="0,0,0,5"/>
+                        <TextBlock Text="🌐 翻译服务" Foreground="#FFAAAAAA" FontSize="11" Margin="0,0,0,3"/>
                         <ComboBox ItemsSource="{Binding TranslationProviders}"
                                  SelectedItem="{Binding SelectedTranslationProvider}"
                                  DisplayMemberPath="Name"
                                  Background="#22FFFFFF"
                                  Foreground="Black"
                                  BorderBrush="#44FFFFFF"
-                                 Padding="8,5"
+                                 Padding="6,4"
                                  Margin="0,0,0,5"/>
                         <Button Content="🔄 刷新Ollama模型"
                                Command="{Binding RefreshOllamaModelsCommand}"
                                Background="#33FFFFFF"
                                Foreground="White"
                                BorderThickness="0"
-                               Padding="8,5"
-                               Margin="0,0,0,15"
+                               Padding="6,4"
+                               Margin="0,0,0,12"
                                HorizontalAlignment="Left"/>
-                        
+
                         <!-- 字幕样式 -->
-                        <TextBlock Text="🎨 字幕样式" Foreground="#FFAAAAAA" FontSize="12" Margin="0,0,0,10"/>
-                        
+                        <TextBlock Text="🎨 字幕样式" Foreground="#FFAAAAAA" FontSize="11" Margin="0,0,0,8"/>
+
                         <!-- 字体大小 -->
-                        <Grid Margin="0,0,0,10">
+                        <Grid Margin="0,0,0,8">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="70"/>
                                 <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="30"/>
                             </Grid.ColumnDefinitions>
-                            <TextBlock Text="字体大小:" Foreground="#FFCCCCCC" Grid.Column="0" VerticalAlignment="Center"/>
-                            <Slider Grid.Column="1" 
-                                   Minimum="12" Maximum="48" 
+                            <TextBlock Text="字体大小:" Foreground="#FFCCCCCC" Grid.Column="0" VerticalAlignment="Center" FontSize="12"/>
+                            <Slider Grid.Column="1"
+                                   Minimum="12" Maximum="48"
                                    Value="{Binding FontSize}"
-                                   Margin="10,0"
+                                   Margin="5,0"
                                    VerticalAlignment="Center"/>
-                            <TextBlock Text="{Binding FontSize}" Foreground="White" Grid.Column="2" Width="25"/>
+                            <TextBlock Text="{Binding FontSize}" Foreground="White" Grid.Column="2" FontSize="12" TextAlignment="Right"/>
                         </Grid>
-                        
+
                         <!-- 透明度 -->
-                        <Grid Margin="0,0,0,10">
+                        <Grid Margin="0,0,0,8">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="70"/>
                                 <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="40"/>
                             </Grid.ColumnDefinitions>
-                            <TextBlock Text="背景透明:" Foreground="#FFCCCCCC" Grid.Column="0" VerticalAlignment="Center"/>
-                            <Slider Grid.Column="1" 
-                                   Minimum="0" Maximum="100" 
+                            <TextBlock Text="背景透明:" Foreground="#FFCCCCCC" Grid.Column="0" VerticalAlignment="Center" FontSize="12"/>
+                            <Slider Grid.Column="1"
+                                   Minimum="0" Maximum="100"
                                    Value="{Binding BackgroundOpacity}"
-                                   Margin="10,0"
+                                   Margin="5,0"
                                    VerticalAlignment="Center"/>
-                            <TextBlock Text="{Binding BackgroundOpacity, StringFormat='{}{0}%'}" Foreground="White" Grid.Column="2" Width="35"/>
+                            <TextBlock Text="{Binding BackgroundOpacity, StringFormat='{}{0}%'}" Foreground="White" Grid.Column="2" FontSize="12" TextAlignment="Right"/>
                         </Grid>
-                        
+
                         <!-- 背景颜色 -->
-                        <Grid Margin="0,0,0,10">
+                        <Grid Margin="0,0,0,8">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="70"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
-                            <TextBlock Text="背景颜色:" Foreground="#FFCCCCCC" Grid.Column="0" VerticalAlignment="Center"/>
+                            <TextBlock Text="背景颜色:" Foreground="#FFCCCCCC" Grid.Column="0" VerticalAlignment="Center" FontSize="12"/>
                             <ComboBox Grid.Column="1"
                                      SelectedItem="{Binding SelectedBackgroundColor}"
-                                     Margin="10,0,0,0"
+                                     Margin="5,0,0,0"
                                      Background="#22FFFFFF"
-                                     Foreground="Black">
+                                     Foreground="Black"
+                                     Padding="6,4">
                                 <ComboBoxItem Content="黑色" Tag="#000000"/>
                                 <ComboBoxItem Content="深蓝" Tag="#1A1A2E"/>
                                 <ComboBoxItem Content="深紫" Tag="#2D1B4E"/>
@@ -351,39 +355,39 @@
                                 <ComboBoxItem Content="透明" Tag="#000000"/>
                             </ComboBox>
                         </Grid>
-                        
+
                         <!-- 圆角 -->
-                        <Grid Margin="0,0,0,15">
+                        <Grid Margin="0,0,0,12">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="70"/>
                                 <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="30"/>
                             </Grid.ColumnDefinitions>
-                            <TextBlock Text="圆角大小:" Foreground="#FFCCCCCC" Grid.Column="0" VerticalAlignment="Center"/>
-                            <Slider Grid.Column="1" 
-                                   Minimum="0" Maximum="50" 
+                            <TextBlock Text="圆角大小:" Foreground="#FFCCCCCC" Grid.Column="0" VerticalAlignment="Center" FontSize="12"/>
+                            <Slider Grid.Column="1"
+                                   Minimum="0" Maximum="50"
                                    Value="{Binding CornerRadius}"
-                                   Margin="10,0"
+                                   Margin="5,0"
                                    VerticalAlignment="Center"/>
-                            <TextBlock Text="{Binding CornerRadius}" Foreground="White" Grid.Column="2" Width="25"/>
+                            <TextBlock Text="{Binding CornerRadius}" Foreground="White" Grid.Column="2" FontSize="12" TextAlignment="Right"/>
                         </Grid>
-                        
+
                         <!-- 其他选项 -->
-                        <CheckBox Content="启用翻译" 
+                        <CheckBox Content="启用翻译"
                                  IsChecked="{Binding EnableTranslation}"
                                  Foreground="White"
-                                 Margin="0,0,0,10"/>
-                        
-                        <CheckBox Content="自动保存字幕" 
+                                 Margin="0,0,0,8"/>
+
+                        <CheckBox Content="自动保存字幕"
                                  IsChecked="{Binding AutoSave}"
                                  Foreground="White"
-                                 Margin="0,0,0,10"/>
-                        
+                                 Margin="0,0,0,8"/>
+
                         <!-- 保存路径 -->
-                        <TextBlock Text="📁 保存路径:" Foreground="#FFAAAAAA" FontSize="12" Margin="0,0,0,5"/>
-                        <TextBlock Text="{Binding SaveDirectory}" 
+                        <TextBlock Text="📁 保存路径:" Foreground="#FFAAAAAA" FontSize="11" Margin="0,0,0,3"/>
+                        <TextBlock Text="{Binding SaveDirectory}"
                                   Foreground="#FFCCCCCC"
-                                  FontSize="11"
+                                  FontSize="10"
                                   TextTrimming="CharacterEllipsis"
                                   Margin="0,0,0,5"/>
                         <Button Content="更改保存路径"
@@ -391,22 +395,22 @@
                                Background="#33FFFFFF"
                                Foreground="White"
                                BorderThickness="0"
-                               Padding="8,5"
+                               Padding="6,4"
                                HorizontalAlignment="Left"/>
                     </StackPanel>
                 </ScrollViewer>
                 
                 <!-- 底部按钮区域 -->
-                <Border Grid.Row="2" Background="#FF2D2D44" Padding="20,15">
+                <Border Grid.Row="2" Background="#FF2D2D44" Padding="15,12">
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                         <Button Content="🔴 开始录音"
                                Command="{Binding StartRecordingCommand}"
                                Background="#FFE53935"
                                Foreground="White"
                                BorderThickness="0"
-                               Padding="20,10"
-                               Margin="5,0"
-                               FontWeight="Bold">
+                               Padding="18,8"
+                               Margin="4,0"
+                               FontWeight="Bold" FontSize="13">
                             <Button.Style>
                                 <Style TargetType="Button">
                                     <Setter Property="Visibility" Value="Collapsed"/>
@@ -424,9 +428,9 @@
                                Background="#FF757575"
                                Foreground="White"
                                BorderThickness="0"
-                               Padding="20,10"
-                               Margin="5,0"
-                               FontWeight="Bold">
+                               Padding="18,8"
+                               Margin="4,0"
+                               FontWeight="Bold" FontSize="13">
                             <Button.Style>
                                 <Style TargetType="Button">
                                     <Setter Property="Visibility" Value="Collapsed"/>
@@ -444,18 +448,18 @@
                                Background="#FF5C6BC0"
                                Foreground="White"
                                BorderThickness="0"
-                               Padding="20,10"
-                               Margin="5,0"
-                               FontWeight="Bold"/>
+                               Padding="18,8"
+                               Margin="4,0"
+                               FontWeight="Bold" FontSize="13"/>
 
                         <Button Content="💾 保存"
                                Command="{Binding SaveTranscriptCommand}"
                                Background="#FF43A047"
                                Foreground="White"
                                BorderThickness="0"
-                               Padding="20,10"
-                               Margin="5,0"
-                               FontWeight="Bold"/>
+                               Padding="18,8"
+                               Margin="4,0"
+                               FontWeight="Bold" FontSize="13"/>
                     </StackPanel>
                 </Border>
             </Grid>
