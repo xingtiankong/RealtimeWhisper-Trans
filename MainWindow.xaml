@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:AudioTranscriber.ViewModels"
         mc:Ignorable="d"
-        Title="语音转写姬" 
+        Title="语音转写姬"
         Height="200" Width="600"
         MinHeight="100" MinWidth="400"
         WindowStartupLocation="CenterScreen"
@@ -18,14 +18,14 @@
         ResizeMode="CanResizeWithGrip"
         MouseLeftButtonDown="Window_MouseLeftButtonDown"
         MouseDoubleClick="Window_MouseDoubleClick">
-    
+
     <Window.DataContext>
         <vm:MainViewModel/>
     </Window.DataContext>
 
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
-        
+
         <!-- 设置按钮样式 -->
         <Style x:Key="IconButton" TargetType="Button">
             <Setter Property="Background" Value="Transparent"/>
@@ -47,11 +47,10 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
-        
+
         <!-- 字幕项样式 -->
         <DataTemplate x:Key="SubtitleItemTemplate">
             <StackPanel Margin="0,2">
-                <!-- 原文 -->
                 <TextBlock Text="{Binding OriginalText}"
                            Foreground="{Binding DataContext.SubtitleColor, RelativeSource={RelativeSource AncestorType=Window}}"
                            FontSize="{Binding DataContext.FontSize, RelativeSource={RelativeSource AncestorType=Window}}"
@@ -59,8 +58,6 @@
                            TextWrapping="Wrap"
                            TextAlignment="Center"
                            Effect="{Binding DataContext.TextShadowEffect, RelativeSource={RelativeSource AncestorType=Window}}"/>
-
-                <!-- 翻译 -->
                 <TextBlock Text="{Binding TranslatedText}"
                            Foreground="{Binding DataContext.TranslationColor, RelativeSource={RelativeSource AncestorType=Window}}"
                            FontSize="{Binding DataContext.TranslationFontSize, RelativeSource={RelativeSource AncestorType=Window}}"
@@ -124,14 +121,6 @@
                 </Setter.Value>
             </Setter>
         </Style>
-
-        <!-- 设置面板阴影效果 -->
-        <DropShadowEffect x:Key="MaterialDesignShadowDepth3"
-                         ShadowDepth="8"
-                         Direction="270"
-                         Color="#FF000000"
-                         Opacity="0.6"
-                         BlurRadius="20"/>
     </Window.Resources>
 
     <Grid>
@@ -144,7 +133,6 @@
                 Padding="20,15"
                 Margin="10">
             <Grid>
-                <!-- 字幕列表 -->
                 <ScrollViewer x:Name="SubtitleScrollViewer"
                              VerticalScrollBarVisibility="Auto"
                              HorizontalScrollBarVisibility="Disabled"
@@ -160,9 +148,8 @@
                         </ItemsControl>
                     </StackPanel>
                 </ScrollViewer>
-                
-                <!-- 空状态提示 -->
-                <TextBlock Text="🎤 等待语音输入..." 
+
+                <TextBlock Text="🎤 等待语音输入..."
                           HorizontalAlignment="Center"
                           VerticalAlignment="Center"
                           Foreground="#88FFFFFF"
@@ -179,13 +166,11 @@
                         </Style>
                     </TextBlock.Style>
                 </TextBlock>
-                
-                <!-- 右上角控制按钮 -->
-                <StackPanel Orientation="Horizontal" 
+
+                <StackPanel Orientation="Horizontal"
                            HorizontalAlignment="Right"
                            VerticalAlignment="Top"
                            Margin="0,-5,-5,0">
-                    <!-- 录制状态指示器 -->
                     <Ellipse Width="8" Height="8" Margin="0,0,8,0">
                         <Ellipse.Style>
                             <Style TargetType="Ellipse">
@@ -208,260 +193,18 @@
                             </Style>
                         </Ellipse.Style>
                     </Ellipse>
-                    
-                    <!-- 设置按钮 -->
-                    <Button x:Name="SettingsButton"
-                           Style="{StaticResource IconButton}"
+
+                    <Button Style="{StaticResource IconButton}"
                            Content="⚙️"
                            Click="SettingsButton_Click"
                            ToolTip="设置"/>
-                    
-                    <!-- 关闭按钮 -->
+
                     <Button Style="{StaticResource IconButton}"
                            Content="✕"
                            Margin="8,0,0,0"
                            Click="CloseButton_Click"
                            ToolTip="关闭"/>
                 </StackPanel>
-            </Grid>
-        </Border>
-        
-        <!-- 设置面板 (默认隐藏) - 实体背景，非透明 -->
-        <Border x:Name="SettingsPanel"
-                Background="#FF1E1E2E"
-                Width="480"
-                Height="650"
-                MaxHeight="700"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"
-                Visibility="Collapsed"
-                Effect="{DynamicResource MaterialDesignShadowDepth3}">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-
-                <!-- 设置标题栏 -->
-                <Border Grid.Row="0"
-                        Background="#FF2D2D44"
-                        Padding="20,12">
-                    <Grid>
-                        <TextBlock Text="⚙️ 设置"
-                                  FontSize="18"
-                                  FontWeight="Bold"
-                                  Foreground="White"
-                                  VerticalAlignment="Center"/>
-                        <Button Style="{StaticResource IconButton}"
-                               Content="✕"
-                               HorizontalAlignment="Right"
-                               Click="CloseSettings_Click"
-                               FontSize="16"/>
-                    </Grid>
-                </Border>
-
-                <!-- 设置内容 -->
-                <ScrollViewer Grid.Row="1"
-                             VerticalScrollBarVisibility="Auto"
-                             Margin="15,10"
-                             CanContentScroll="False"
-                             PanningMode="Both"
-                             Style="{StaticResource TransparentScrollViewer}">
-                    <StackPanel>
-                        <!-- 音频源 -->
-                        <TextBlock Text="🎧 音频源" Foreground="#FFAAAAAA" FontSize="11" Margin="0,0,0,3"/>
-                        <ComboBox ItemsSource="{Binding AudioDevices}"
-                                 SelectedItem="{Binding SelectedDevice}"
-                                 DisplayMemberPath="Name"
-                                 Background="#22FFFFFF"
-                                 Foreground="Black"
-                                 BorderBrush="#44FFFFFF"
-                                 Padding="6,4"
-                                 Margin="0,0,0,12"/>
-
-                        <!-- 翻译服务 -->
-                        <TextBlock Text="🌐 翻译服务" Foreground="#FFAAAAAA" FontSize="11" Margin="0,0,0,3"/>
-                        <ComboBox ItemsSource="{Binding TranslationProviders}"
-                                 SelectedItem="{Binding SelectedTranslationProvider}"
-                                 DisplayMemberPath="Name"
-                                 Background="#22FFFFFF"
-                                 Foreground="Black"
-                                 BorderBrush="#44FFFFFF"
-                                 Padding="6,4"
-                                 Margin="0,0,0,5"/>
-                        <Button Content="🔄 刷新Ollama模型"
-                               Command="{Binding RefreshOllamaModelsCommand}"
-                               Background="#33FFFFFF"
-                               Foreground="White"
-                               BorderThickness="0"
-                               Padding="6,4"
-                               Margin="0,0,0,12"
-                               HorizontalAlignment="Left"/>
-
-                        <!-- 字幕样式 -->
-                        <TextBlock Text="🎨 字幕样式" Foreground="#FFAAAAAA" FontSize="11" Margin="0,0,0,8"/>
-
-                        <!-- 字体大小 -->
-                        <Grid Margin="0,0,0,8">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="70"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="30"/>
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Text="字体大小:" Foreground="#FFCCCCCC" Grid.Column="0" VerticalAlignment="Center" FontSize="12"/>
-                            <Slider Grid.Column="1"
-                                   Minimum="12" Maximum="48"
-                                   Value="{Binding FontSize}"
-                                   Margin="5,0"
-                                   VerticalAlignment="Center"/>
-                            <TextBlock Text="{Binding FontSize}" Foreground="White" Grid.Column="2" FontSize="12" TextAlignment="Right"/>
-                        </Grid>
-
-                        <!-- 透明度 -->
-                        <Grid Margin="0,0,0,8">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="70"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="40"/>
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Text="背景透明:" Foreground="#FFCCCCCC" Grid.Column="0" VerticalAlignment="Center" FontSize="12"/>
-                            <Slider Grid.Column="1"
-                                   Minimum="0" Maximum="100"
-                                   Value="{Binding BackgroundOpacity}"
-                                   Margin="5,0"
-                                   VerticalAlignment="Center"/>
-                            <TextBlock Text="{Binding BackgroundOpacity, StringFormat='{}{0}%'}" Foreground="White" Grid.Column="2" FontSize="12" TextAlignment="Right"/>
-                        </Grid>
-
-                        <!-- 背景颜色 -->
-                        <Grid Margin="0,0,0,8">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="70"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Text="背景颜色:" Foreground="#FFCCCCCC" Grid.Column="0" VerticalAlignment="Center" FontSize="12"/>
-                            <ComboBox Grid.Column="1"
-                                     SelectedItem="{Binding SelectedBackgroundColor}"
-                                     Margin="5,0,0,0"
-                                     Background="#22FFFFFF"
-                                     Foreground="Black"
-                                     Padding="6,4">
-                                <ComboBoxItem Content="黑色" Tag="#000000"/>
-                                <ComboBoxItem Content="深蓝" Tag="#1A1A2E"/>
-                                <ComboBoxItem Content="深紫" Tag="#2D1B4E"/>
-                                <ComboBoxItem Content="深绿" Tag="#1B3A2E"/>
-                                <ComboBoxItem Content="深红" Tag="#3A1B1B"/>
-                                <ComboBoxItem Content="透明" Tag="#000000"/>
-                            </ComboBox>
-                        </Grid>
-
-                        <!-- 圆角 -->
-                        <Grid Margin="0,0,0,12">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="70"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="30"/>
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Text="圆角大小:" Foreground="#FFCCCCCC" Grid.Column="0" VerticalAlignment="Center" FontSize="12"/>
-                            <Slider Grid.Column="1"
-                                   Minimum="0" Maximum="50"
-                                   Value="{Binding CornerRadius}"
-                                   Margin="5,0"
-                                   VerticalAlignment="Center"/>
-                            <TextBlock Text="{Binding CornerRadius}" Foreground="White" Grid.Column="2" FontSize="12" TextAlignment="Right"/>
-                        </Grid>
-
-                        <!-- 其他选项 -->
-                        <CheckBox Content="启用翻译"
-                                 IsChecked="{Binding EnableTranslation}"
-                                 Foreground="White"
-                                 Margin="0,0,0,8"/>
-
-                        <CheckBox Content="自动保存字幕"
-                                 IsChecked="{Binding AutoSave}"
-                                 Foreground="White"
-                                 Margin="0,0,0,8"/>
-
-                        <!-- 保存路径 -->
-                        <TextBlock Text="📁 保存路径:" Foreground="#FFAAAAAA" FontSize="11" Margin="0,0,0,3"/>
-                        <TextBlock Text="{Binding SaveDirectory}"
-                                  Foreground="#FFCCCCCC"
-                                  FontSize="10"
-                                  TextTrimming="CharacterEllipsis"
-                                  Margin="0,0,0,5"/>
-                        <Button Content="更改保存路径"
-                               Command="{Binding ChangeSaveDirectoryCommand}"
-                               Background="#33FFFFFF"
-                               Foreground="White"
-                               BorderThickness="0"
-                               Padding="6,4"
-                               HorizontalAlignment="Left"/>
-                    </StackPanel>
-                </ScrollViewer>
-                
-                <!-- 底部按钮区域 -->
-                <Border Grid.Row="2" Background="#FF2D2D44" Padding="15,12">
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                        <Button Content="🔴 开始录音"
-                               Command="{Binding StartRecordingCommand}"
-                               Background="#FFE53935"
-                               Foreground="White"
-                               BorderThickness="0"
-                               Padding="18,8"
-                               Margin="4,0"
-                               FontWeight="Bold" FontSize="13">
-                            <Button.Style>
-                                <Style TargetType="Button">
-                                    <Setter Property="Visibility" Value="Collapsed"/>
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding CurrentState}" Value="Idle">
-                                            <Setter Property="Visibility" Value="Visible"/>
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Button.Style>
-                        </Button>
-
-                        <Button Content="⏹️ 停止录音"
-                               Command="{Binding StopRecordingCommand}"
-                               Background="#FF757575"
-                               Foreground="White"
-                               BorderThickness="0"
-                               Padding="18,8"
-                               Margin="4,0"
-                               FontWeight="Bold" FontSize="13">
-                            <Button.Style>
-                                <Style TargetType="Button">
-                                    <Setter Property="Visibility" Value="Collapsed"/>
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding CurrentState}" Value="Recording">
-                                            <Setter Property="Visibility" Value="Visible"/>
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Button.Style>
-                        </Button>
-
-                        <Button Content="🗑️ 清空"
-                               Command="{Binding ClearTranscriptCommand}"
-                               Background="#FF5C6BC0"
-                               Foreground="White"
-                               BorderThickness="0"
-                               Padding="18,8"
-                               Margin="4,0"
-                               FontWeight="Bold" FontSize="13"/>
-
-                        <Button Content="💾 保存"
-                               Command="{Binding SaveTranscriptCommand}"
-                               Background="#FF43A047"
-                               Foreground="White"
-                               BorderThickness="0"
-                               Padding="18,8"
-                               Margin="4,0"
-                               FontWeight="Bold" FontSize="13"/>
-                    </StackPanel>
-                </Border>
             </Grid>
         </Border>
     </Grid>

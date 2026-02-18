@@ -1,8 +1,6 @@
 using AudioTranscriber.ViewModels;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Effects;
 using System.Collections.Specialized;
 
 namespace AudioTranscriber
@@ -14,6 +12,7 @@ namespace AudioTranscriber
     {
         private bool _isMaximized = false;
         private Rect _normalBounds;
+        private SettingsWindow? _settingsWindow;
 
         public MainWindow()
         {
@@ -61,10 +60,7 @@ namespace AudioTranscriber
             if (e.ClickCount == 1)
             {
                 // 单击拖动窗口
-                if (SettingsPanel.Visibility != Visibility.Visible)
-                {
-                    DragMove();
-                }
+                DragMove();
             }
         }
 
@@ -95,19 +91,23 @@ namespace AudioTranscriber
         }
 
         /// <summary>
-        /// 打开设置面板
+        /// 打开设置窗口
         /// </summary>
         private void SettingsButton_Click(object sender, RoutedEventArgs e)
         {
-            SettingsPanel.Visibility = Visibility.Visible;
-        }
-
-        /// <summary>
-        /// 关闭设置面板
-        /// </summary>
-        private void CloseSettings_Click(object sender, RoutedEventArgs e)
-        {
-            SettingsPanel.Visibility = Visibility.Collapsed;
+            if (_settingsWindow == null || !_settingsWindow.IsVisible)
+            {
+                _settingsWindow = new SettingsWindow
+                {
+                    Owner = this,
+                    DataContext = this.DataContext // 共享同一个ViewModel
+                };
+                _settingsWindow.Show();
+            }
+            else
+            {
+                _settingsWindow.Activate();
+            }
         }
 
         /// <summary>
@@ -115,6 +115,8 @@ namespace AudioTranscriber
         /// </summary>
         private void CloseButton_Click(object sender, RoutedEventArgs e)
         {
+            // 关闭设置窗口（如果打开）
+            _settingsWindow?.Close();
             Close();
         }
     }
